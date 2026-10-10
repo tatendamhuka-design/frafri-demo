@@ -1,0 +1,110 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../app/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// Admin users
+// ─────────────────────────────────────────────
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("admin") // "admin" | "editor"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Packages
+// ─────────────────────────────────────────────
+
+model Package {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  duration     String
+  groupSize    String
+  location     String
+  priceFrom    Int
+  image        String
+  summary      String   @db.Text
+  highlights   String[] // array of strings — Postgres native
+  featured     Boolean  @default(false)
+  published    Boolean  @default(true)
+
+  destinations Destination[] @relation("PackageDestinations")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Destinations
+// ─────────────────────────────────────────────
+
+model Destination {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  region       String
+  tagline      String
+  blurb        String   @db.Text
+  image        String
+  published    Boolean  @default(true)
+
+  packages     Package[] @relation("PackageDestinations")
+  guides       Guide[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Travel Guides
+// ─────────────────────────────────────────────
+
+model Guide {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  category     String
+  readTime     String
+  excerpt      String   @db.Text
+  content      String   @db.Text @default("")
+  image        String
+  published    Boolean  @default(true)
+
+  destination   Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  destinationId String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// Enquiries
+// ─────────────────────────────────────────────
+
+model Enquiry {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  country      String?
+  travelDates  String?
+  groupSize    String?
+  interest     String?
+  message      String   @db.Text
+  status       String   @default("new") // new | replied | quoted | closed
+  notes        String?  @db.Text
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

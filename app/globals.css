@@ -1,26 +1,324 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   FraFri Adventure Escapes — Design Tokens
+   ============================================================ */
+
+@theme {
+  /* Base dark — near-black, warmer than pure #000 */
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #1a1a1a;
+
+  /* Safari Black — when you truly need pure black */
+  --color-safari-black: #000000;
+
+  /* Warm Ivory — page background */
+  --color-cream: #f7f3ea;
+  --color-sand: #efe9da;
+  --color-sand-deep: #ddd5c2;
+
+  /* FraFri Gold — CTA, accents */
+  --color-accent: #ffb900;
+  --color-accent-hover: #e6a600;
+  --color-accent-dark: #c68a00;   /* for text on light backgrounds */
+
+  /* Savannah Olive — secondary accent */
+  --color-olive: #6f7550;
+  --color-olive-soft: #8a8f68;
+
+  /* Muted text */
+  --color-muted: #6b6357;
+  --color-muted-light: #a89f8e;
+
+  /* Utility */
+  --color-white: #ffffff;
+
+  /* --- Typography ---------------------------------------------- */
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Radii ---------------------------------------------------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  /* --- Container ----------------------------------------------- */
+  --container-page: 1280px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ============================================================
+   Base
+   ============================================================ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+h2 { font-size: clamp(1.75rem, 3.5vw, 3rem); }
+h3 { font-size: clamp(1.25rem, 2vw, 1.75rem); }
+
+a { color: inherit; text-decoration: none; }
+
+img { max-width: 100%; height: auto; display: block; }
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+
+.container-page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-page { padding-inline: 2rem; }
+}
+
+/* Small caps eyebrow label used above section headings */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-olive);
+}
+
+/* Accent button — gold background, black text (high contrast, luxurious) */
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-accent);
+  color: var(--color-ink);
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+.btn-accent:hover { background-color: var(--color-accent-hover); }
+
+/* Ghost / outline button — for dark backgrounds */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--color-white);
+  padding: 0.875rem 1.75rem;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn-ghost:hover {
+  background-color: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.6);
+}
+
+/* Section vertical rhythm */
+.section { padding-block: 5rem; }
+@media (min-width: 768px) {
+  .section { padding-block: 7rem; }
+}
+
+/* ============================================================
+   Animation
+   ============================================================ */
+
+/* Slow hero zoom — barely perceptible, adds life */
+@keyframes heroZoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+/* Trust badge marquee — scrolls right to left, seamless loop */
+.marquee-track {
+  width: max-content;
+  animation: marqueeScroll 40s linear infinite;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+   Hero slideshow — 5 slides, 8s each, total 40s loop
+   ============================================================ */
+
+.hero-slide {
+  animation: heroSlide 40s linear infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes heroSlide {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  20% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Slide indicators */
+.hero-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: rgba(255,255,255,0.4);
+  animation: heroDot 40s linear infinite;
+}
+
+@keyframes heroDot {
+  0% {
+    background-color: rgba(255,255,255,0.95);
+    transform: scale(1.4);
+  }
+  18% {
+    background-color: rgba(255,255,255,0.95);
+    transform: scale(1.4);
+  }
+  20% {
+    background-color: rgba(255,255,255,0.4);
+    transform: scale(1);
+  }
+  100% {
+    background-color: rgba(255,255,255,0.4);
+    transform: scale(1);
+  }
+}
+
+/* ============================================================
+   Hero slideshow — 5 slides, 10s each, 50s total loop
+   ============================================================ */
+
+.hero-slide {
+  animation: heroSlide 50s linear infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes heroSlide {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  20% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Per-slide text — same timing, fades with its image */
+.hero-text {
+  animation: heroText 50s linear infinite;
+  opacity: 0;
+}
+
+@keyframes heroText {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  3% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  17% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* Slide indicators */
+.hero-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: rgba(255,255,255,0.4);
+  animation: heroDot 50s linear infinite;
+}
+
+@keyframes heroDot {
+  0% {
+    background-color: rgba(255,255,255,0.95);
+    transform: scale(1.4);
+  }
+  18% {
+    background-color: rgba(255,255,255,0.95);
+    transform: scale(1.4);
+  }
+  20% {
+    background-color: rgba(255,255,255,0.4);
+    transform: scale(1);
+  }
+  100% {
+    background-color: rgba(255,255,255,0.4);
+    transform: scale(1);
+  }
 }
